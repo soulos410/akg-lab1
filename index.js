@@ -1,13 +1,15 @@
 let canvas = document.querySelector('canvas');
 
 let ctx = canvas.getContext('2d');
+ctx.fillStyle = '#000';
 ctx.strokeStyle = '#000';
 
 let currentPolygon = [[20, 140], [70, 75], [120, 10], [170, 75], [220, 140], [120, 140]];
-const resultPolygon = [[1350, 770], [1450, 850], [1550, 850], [1650, 770], [1550, 690], [1450, 690]];
+const resultPolygon = [[1550, 920], [1650, 1000], [1750, 1000], [1850, 920], [1750, 840], [1650, 840]];
 const centerPolygon = [[870, 560], [920, 495], [970, 430], [1020, 495], [1070, 560], [970, 560]];
 let differencesBetweenFigures = [[], [], [], [], [], []];
-const maxSteps = 320;
+const separatorCoords = [[930, 0], [930, 1000]];
+const maxSteps = 160;
 
 function calculateDifferences(figureToCalculate) {
     figureToCalculate.forEach((el, index) => {
@@ -16,13 +18,24 @@ function calculateDifferences(figureToCalculate) {
     });
 }
 
+function createSeparator(separator) {
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    separator.forEach((el, index) => {
+        index === 0 ? ctx.moveTo(el[0], el[1]) : ctx.lineTo(el[0], el[1]);
+    });
+    ctx.closePath();       // Рисует линию к нижнему левому углу
+    ctx.stroke();
+    ctx.lineWidth = 1;
+}
+
 function createPolygon(coords) {
     ctx.beginPath();
     coords.forEach((el, index) => {
         index === 0 ? ctx.moveTo(el[0], el[1]) : ctx.lineTo(el[0], el[1]);
     });
     ctx.closePath();       // Рисует линию к нижнему левому углу
-    ctx.stroke();
+    ctx.fill();
 }
 
 function updatePolygonCoords() {
@@ -40,6 +53,7 @@ function start() {
         const startAnimation = setInterval(() => {
             if (currentSteps < maxSteps / 2) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                createSeparator(separatorCoords);
                 updatePolygonCoords();
                 createPolygon(currentPolygon);
                 currentSteps++;
